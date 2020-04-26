@@ -19,7 +19,7 @@ const {
 } = require("./articleServices");
 const { signIn, createUser } = require("./authServices");
 
-export default {
+module.exports = {
   getAllUsers,
   getOneUser,
   updateUser,
