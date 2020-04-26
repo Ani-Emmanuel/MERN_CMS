@@ -16,4 +16,4 @@ function database(url) {
   );
 }
 
-module.exports = database;
+module.exports = { database };

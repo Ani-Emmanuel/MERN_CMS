@@ -1,4 +1,4 @@
-import { Article } from "../model";
+const { Article } = require("../model");
 
 const getAllArticles = async (req, res, next) => {
   try {

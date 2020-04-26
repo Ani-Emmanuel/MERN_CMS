@@ -1,4 +1,4 @@
-import { User } from ("../model");
+const { User } = require("../model");
 
 const getAllUsers = async (req, res, next) => {
   try {
@@ -14,27 +14,6 @@ const getOneUser = async (req, res, next) => {
     const { userId } = req.params;
     const user = await User.findById(userId);
     res.status(200).json({ payload: { data: user } });
-  } catch (e) {
-    next(e);
-  }
-};
-
-const createUser = async (req, res, next) => {
-  try {
-    const payload = req.body;
-    const { email } = req.body;
-    const checkUser = await User.findById({ email });
-    if (checkUser) {
-      return res.status(401).json({
-        payload: {
-          message: "User already exist please login or reset password",
-        },
-      });
-    }
-    const user = await User.create(payload);
-    res
-      .status(201)
-      .json({ payload: { message: "User created successfully", data: user } });
   } catch (e) {
     next(e);
   }
@@ -68,7 +47,6 @@ const deleteUser = async (req, res, next) => {
 module.exports = {
   getAllUsers,
   getOneUser,
-  createUser,
   updateUser,
   deleteUser,
 };
