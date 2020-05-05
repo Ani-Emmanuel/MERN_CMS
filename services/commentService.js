@@ -1,26 +1,39 @@
-const { Comment } = require("../model");
+const { Comment, Article } = require("../model");
 
-const createComment = async (userId, req, res, next) => {
+const createComment = async ({ userId }, req, res, next) => {
   try {
     const { articleId } = req.params;
     const doc = req.body;
     doc.article = articleId;
     doc.user = userId;
 
-    const comment = await Comment.create(doc);
+    const comment = new Comment(doc);
+    const { _id } = comment;
+
+    const article = await Article.findById(articleId);
+    article.comments.push(_id);
+    await article.save();
+    await comment.save();
     res.status(201).json({ payload: { data: comment } });
   } catch (e) {
     next(e);
   }
 };
 
-const updateComment = async (userId, req, res, next) => {
+const updateComment = async ({ userId }, req, res, next) => {
   try {
     const { commentId } = req.params;
     const doc = req.body;
-    const { user } = await Comment.findById(commentId);
 
-    if (userId !== user) {
+    const post = await Comment.findById(commentId);
+
+    if (!post) {
+      return res.status(404).json({
+        payload: { message: "Comment not founds" },
+      });
+    }
+
+    if (userId != post.user) {
       return res
         .status(301)
         .json({ payload: { message: "You are not authorized" } });
@@ -36,18 +49,31 @@ const updateComment = async (userId, req, res, next) => {
   }
 };
 
-const deleteComment = async (userId, req, res, next) => {
+const deleteComment = async ({ userId }, req, res, next) => {
   try {
     const { commentId } = req.params;
-    const { user } = await Comment.findById(commentId);
+    const comment = await Comment.findById(commentId);
 
-    if (userId !== user) {
+    if (!comment) {
+      return res.status(404).json({
+        payload: { message: "Comment not founds" },
+      });
+    }
+
+    if (userId != comment.user) {
       return res
         .status(301)
         .json({ payload: { message: "You are not authorized" } });
     }
 
-    await Comment.findByIdAndRemove(commentId);
+    const { _id } = await Comment.findByIdAndRemove(commentId);
+    const article = await Article.find({ comments: { $in: [_id] } });
+
+    const index = article[0].comments.indexOf(_id);
+    if (index > -1) {
+      article[0].comments.splice(index, 1);
+      await article[0].save();
+    }
 
     res
       .status(200)

@@ -6,20 +6,29 @@ const createUser = async (req, res, next) => {
     const payload = req.body;
     const { email, password } = req.body;
     //check if user already exists
-    const checkUser = await User.findById({ email });
-    if (checkUser) {
+    console.log("here");
+    const checkUser = await User.findOne({ email: email });
+
+    if (checkUser !== null) {
       return res.status(401).json({
         payload: {
           message: "User already exist please login or reset password",
         },
       });
     }
+    console.log("here again");
+
     //encrypt password and save the payload
     payload.password = encryptPassword(password);
-    const user = await User.create(payload);
-    res
-      .status(201)
-      .json({ payload: { message: "User created successfully", data: user } });
+    console.log(payload);
+
+    const user = new User(payload);
+    console.log(user);
+
+    const newUser = await user.save();
+    res.status(201).json({
+      payload: { message: "User created successfully", data: newUser },
+    });
   } catch (e) {
     next(e);
   }

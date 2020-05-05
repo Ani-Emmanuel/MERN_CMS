@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.SchemaType;
+const Schema = mongoose.Schema;
 
 const commentSchema = new Schema(
   {

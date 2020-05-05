@@ -1,8 +1,9 @@
-const Router = require("express").Router();
+const CommentRouter = require("express").Router();
 const { createComment, updateComment, deleteComment } = require("../services");
+const { compareToken } = require("../util");
 
-Router.route("/create").post(createComment);
-Router.route("/update/:commentId").put(updateComment);
-Router.route("/delete/:commentId").delete(deleteComment);
+CommentRouter.route("/create/:articleId").post(compareToken, createComment);
+CommentRouter.route("/update/:commentId").put(compareToken, updateComment);
+CommentRouter.route("/delete/:commentId").delete(compareToken, deleteComment);
 
-module.exports = { Router };
+module.exports = { CommentRouter };

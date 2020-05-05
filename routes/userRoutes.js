@@ -1,4 +1,4 @@
-const Router = require("express").Router();
+const UserRouter = require("express").Router();
 const {
   getAllUsers,
   getOneUser,
@@ -6,9 +6,9 @@ const {
   deleteUser,
 } = require("../services");
 
-Router.route("/").get(getAllUsers);
-Router.route("/:userId").get(getOneUser);
-Router.route("/update/:userId").put(updateUser);
-Router.route("/delete/:userId").delete(deleteUser);
+UserRouter.route("/").get(getAllUsers);
+UserRouter.route("/:userId").get(getOneUser);
+UserRouter.route("/update/:userId").put(updateUser);
+UserRouter.route("/delete/:userId").delete(deleteUser);
 
-module.exports = { Router };
+module.exports = { UserRouter };

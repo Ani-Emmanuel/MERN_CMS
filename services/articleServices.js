@@ -30,15 +30,20 @@ const createArticle = async (userId, req, res, next) => {
   }
 };
 
-const updateArticle = async (userId, req, res, next) => {
+const updateArticle = async ({ userId }, req, res, next) => {
   try {
-    const { userId, articleId } = req.params;
+    const { articleId } = req.params;
 
     const post = await Article.findById(articleId);
+    if (!post) {
+      return res.status(404).json({
+        payload: { message: "Article not founds" },
+      });
+    }
     const { user } = post;
 
     //check to make sure its the author that can edit the article
-    if (user !== userId) {
+    if (user != userId) {
       return res.status(301).json({
         payload: { message: "Sorry only the author can update the article" },
       });
@@ -54,7 +59,7 @@ const updateArticle = async (userId, req, res, next) => {
   }
 };
 
-const voteArticle = async (userId, req, res, next) => {
+const voteArticle = async ({ userId }, req, res, next) => {
   try {
     const { articleId } = req.params;
     const post = await Article.findById(articleId);
@@ -67,11 +72,18 @@ const voteArticle = async (userId, req, res, next) => {
   }
 };
 
-const deleteArticle = async (req, res, next) => {
+const deleteArticle = async ({ userId }, req, res, next) => {
   try {
-    const { userId, articleId } = req.params;
-    const { user } = await Article.findById(articleId);
-    if (userId !== user) {
+    const { articleId } = req.params;
+
+    const article = await Article.findById(articleId);
+    if (!article) {
+      return res.status(404).json({
+        payload: { message: "Article not founds" },
+      });
+    }
+
+    if (userId != article.user) {
       return res
         .status(301)
         .json({ payload: { message: "You are not authorized" } });

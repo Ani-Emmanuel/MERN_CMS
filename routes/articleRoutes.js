@@ -1,4 +1,4 @@
-const Router = require("express").Router();
+const ArticleRouter = require("express").Router();
 const { compareToken } = require("../util");
 const {
   createArticle,
@@ -9,9 +9,11 @@ const {
   voteArticle,
 } = require("../services");
 
-Router.route("/").get(getAllArticles);
-Router.route("/:articleId").get(getOneArticle);
-Router.route("/create").post(compareToken, createArticle);
-Router.route("/voteArticle").post(compareToken, voteArticle);
-Router.route("/update/:articleId").put(compareToken, updateArticle);
-Router.route("/delete/:articleId").delete(compareToken, deleteArticle);
+ArticleRouter.route("/").get(getAllArticles);
+ArticleRouter.route("/:articleId").get(getOneArticle);
+ArticleRouter.route("/create").post(compareToken, createArticle);
+ArticleRouter.route("/voteArticle/:articleId").put(compareToken, voteArticle);
+ArticleRouter.route("/update/:articleId").put(compareToken, updateArticle);
+ArticleRouter.route("/delete/:articleId").delete(compareToken, deleteArticle);
+
+module.exports = { ArticleRouter };

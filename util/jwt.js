@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const signToken = async (userId, secret) => {
-  const token = await jwt.sign(userId, secret);
+  const token = await jwt.sign({ userId }, secret);
   return token;
 };
 
